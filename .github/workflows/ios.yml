@@ -21,6 +21,18 @@ jobs:
           DIR=$(dirname "$PROJ")
           echo "DIR=$DIR" >> $GITHUB_ENV
 
+      - name: Fix Hallucinated API in Theme.swift
+        run: |
+          python3 -c "
+          import glob
+          for p in glob.glob('**/Theme.swift', recursive=True):
+              with open(p, 'r') as f:
+                  c = f.read()
+              c = c.replace('self.glassEffect(.regular, in: shape)', 'self.background(shape.fill(.ultraThinMaterial))')
+              with open(p, 'w') as f:
+                  f.write(c)
+          "
+
       - name: Ensure Shared Scheme Exists
         run: |
           mkdir -p "$DIR/PitampuraBites.xcodeproj/xcshareddata/xcschemes"
